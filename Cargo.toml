@@ -1,6 +1,6 @@
 [package]
 name = "sniffer-tool"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2024"
 
 [dependencies]
@@ -16,7 +16,7 @@ serde_json = "1.0.141"
 serde_repr = "0.1.20"
 tokio = { version = "1.47.0", features = ["full"] }
 tokio-tungstenite = "0.27.0"
-protoshark = { git = "https://github.com/ys4e/protoshark" }
-ys-sniffer = { git = "https://github.com/ys4e/ys-sniffer.git", features = ["tokio"] }
+protoshark = "2.0.0"
+ys-sniffer = { version = "0.2.4", features = ["tokio"] }
 protox = "0.9.0"
 futures-util = "0.3.31"
