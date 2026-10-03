@@ -2,13 +2,35 @@ use std::fmt::{Display, Formatter};
 use dialoguer::Select;
 use dialoguer::theme::ColorfulTheme;
 use pcap::Device;
-use anyhow::Result;
+use anyhow::{bail, Result};
 
 /// Prompts the user to select a network device.
-pub fn select() -> Result<String> {
+///
+/// When `wanted` is given, the device is picked without prompting:
+/// by its index in the list, its exact name, or a part of its description.
+pub fn select(wanted: Option<&str>) -> Result<String> {
     // Get all devices for packet capturing.
     let device_list = Device::list()?;
     let device_names = CaptureDevice::into(&device_list);
+
+    if let Some(wanted) = wanted {
+        let lowered = wanted.to_lowercase();
+        let found = wanted.parse::<usize>().ok()
+            .and_then(|index| device_list.get(index))
+            .or_else(|| device_list.iter().find(|d| d.name == wanted))
+            .or_else(|| device_list.iter().find(|d| d.desc.as_ref()
+                .is_some_and(|desc| desc.to_lowercase().contains(&lowered))));
+
+        let Some(device) = found else {
+            for (index, device) in device_names.iter().enumerate() {
+                info!("{index}: {device} ({})", device.0.name);
+            }
+            bail!("No network device matches '{wanted}'");
+        };
+
+        info!("Capturing from {}.", CaptureDevice(device.clone()));
+        return Ok(device.name.clone());
+    }
 
     let device = Select::with_theme(&ColorfulTheme::default())
         .with_prompt("Select a network device to capture from")

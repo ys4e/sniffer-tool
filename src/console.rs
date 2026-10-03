@@ -31,6 +31,8 @@ fn start_reading(tx: UnboundedSender<String>) {
         let mut buffer = String::new();
 
         match stdin.read_line(&mut buffer) {
+            // The input was closed; there is nothing more to read.
+            Ok(0) => break,
             Ok(_) => {
                 let message = buffer.trim().to_string();
                 if message.is_empty() {
@@ -75,6 +77,19 @@ async fn handle_command(command: String) -> Result<()> {
             settings.save();
 
             info!("Wrote settings to `config.json`.");
+        },
+        "key" => {
+            // Hands candidate session keys (4096-byte files) to the running sniffer.
+            if args.is_empty() {
+                info!("Usage: key <file.bin>...");
+            }
+            for path in &args {
+                match std::fs::read(path).map_err(anyhow::Error::from)
+                    .and_then(|key| ys_sniffer::add_session_key(&key)) {
+                    Ok(()) => info!("Added session key '{}'.", path),
+                    Err(error) => warn!("Failed to add session key '{}': {}", path, error)
+                }
+            }
         },
         "reload" => {
             decoder::load_definitions()?;
@@ -186,7 +201,7 @@ async fn handle_command(command: String) -> Result<()> {
         },
         _ => {
             warn!("Unknown command: {}", label);
-            info!("Known commands: clear, save, reload, whitelist, blacklist")
+            info!("Known commands: clear, save, reload, key, whitelist, blacklist")
         }
     }
 
