@@ -1610,8 +1610,6 @@ dependencies = [
 [[package]]
 name = "ys-sniffer"
 version = "0.2.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9e8ef91c671b62ecd87964e27333c3796a54073fddae054cd402e10d80b5231f"
 dependencies = [
  "anyhow",
  "base64",

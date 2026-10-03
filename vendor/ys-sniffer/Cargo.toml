@@ -1,0 +1,52 @@
+[package]
+name = "ys-sniffer"
+version = "0.2.4"
+authors = ["KingRainbow44"]
+description = "Embeddable packet sniffer for anime game"
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/ys4e/ys-sniffer"
+edition = "2021"
+
+[features]
+
+processor = []
+tokio = ["dep:tokio"]
+
+[dependencies]
+
+# Tokio asynchronous runtime
+tokio = { version = "1", optional = true, features = ["sync", "rt"] }
+
+# KCP decoder library
+ys-kcp = { version = "1.2.1", features = ["byte-check"] }
+
+# Arbitrary protocol buffer data parser
+protoshark = "2.0.0"
+
+# `pcap` wrapper library
+pcap = "2"
+
+# Serde deserialization
+serde = { version = "1", features = ["derive"] }
+
+# Channel library
+crossbeam-channel = "0.5"
+
+# Logger
+log = "0.4"
+
+# `anyhow` error resolver
+anyhow = "1"
+
+# Binary manipulation
+bytes = "1"
+
+# Runtime-initialized static constants
+lazy_static = "1"
+
+# Base64 encoding/decoding
+base64 = "0.22"
+
+# RSA decryption
+rsa = "0.9"
